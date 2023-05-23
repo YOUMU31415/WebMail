@@ -25,6 +25,7 @@ public class HttpParser implements AutoCloseable{
     private String password;
     private String subject;
     private String body;
+    private String url;
 
 
     public HttpParser(Socket socket) throws IOException {
@@ -59,6 +60,7 @@ public class HttpParser implements AutoCloseable{
         String[] tokens = inputLine.split("\\s+");
         //记录方法
         method = tokens[0];
+        url = tokens[1];
 
     }
 

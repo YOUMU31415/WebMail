@@ -77,7 +77,33 @@ public class HttpHandler implements Runnable {
 
 
 
+                // 转发 POST 请求给原目标服务器
+                String targetServerHost = "www.wenku8.net";
+                int targetServerPort = 80;
 
+                Socket targetSocket = new Socket(targetServerHost, targetServerPort);
+                BufferedWriter targetWriter = new BufferedWriter(new OutputStreamWriter(targetSocket.getOutputStream()));
+                BufferedReader targetReader = new BufferedReader(new InputStreamReader(targetSocket.getInputStream()));
+
+                // 构建转发的请求
+                String request = httpParser.getHttpLine() + "\r\n" + httpParser.getHttpHeader() + "\r\n" + httpParser.getHttpBody();
+
+                // 发送请求至目标服务器
+                targetWriter.write(request);
+                targetWriter.flush();
+
+                // 读取目标服务器响应并转发至客户端
+                PrintWriter clientWriter = new PrintWriter(socket.getOutputStream());
+                String responseLine;
+                while ((responseLine = targetReader.readLine()) != null) {
+                    clientWriter.println(responseLine);
+                }
+                clientWriter.flush();
+
+                // 关闭连接
+                targetWriter.close();
+                targetReader.close();
+                targetSocket.close();
 
 
 
